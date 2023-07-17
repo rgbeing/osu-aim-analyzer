@@ -17,17 +17,7 @@ from ReplayFrame import ReplayFrame
 from utilFunctions import *
 from hitCalculator import *
 
-'''
-for i in range(len(hitObjects)):
-    obj = hitObjects[i]
-    if obj['object_name'] == 'spinner':
-        print("Object: spinner\tPressed: None")
-    else:
-        if hitFrames[i]:
-            print("Time {} - Object: ({}, {})\tPressed: ({}, {}) @ {}".format(obj['startTime'], obj['position'][0], obj['position'][1], frames[hitFrames[i]].x, frames[hitFrames[i]].y, frames[hitFrames[i]].time))
-        else:
-            print("Time {} - Object: ({}, {})\tPressed: Not Pressed".format(obj['startTime'], obj['position'][0], obj['position'][1]))
-'''
+
 def explainByCoordinates(parsedReplay):
     errors = ([], [])
     positions = ([], [])
@@ -194,7 +184,7 @@ def plotDirectionsDiagnosis(models, ax=None):
     realPlayfield = Rectangle((0, 0), 512, 384, fill=False, edgecolor = 'deeppink')
     playerPlayfield = Rectangle((0, 0), 512, 384, fill=False, edgecolor = 'blue')
 
-    transform = Affine2D().rotate_deg_around(256, 192, (models[0].fit().params)[0] * 180 / 3.1415) + ax.transData
+    transform = Affine2D().rotate_deg_around(256, 192, -(models[0].fit().params)[0] * 180 / 3.1415) + ax.transData
     playerPlayfield.set_transform(transform)
 
     ax.axis('off')

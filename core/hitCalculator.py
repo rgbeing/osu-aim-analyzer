@@ -17,8 +17,8 @@ def calculateHitPlace(replayPath, mapPath):
     hitObjects = beatmap.beatmap['hitObjects']
 
     # only for those mysterious things...
-    firstObjectTime = hitObjects[0]['startTime']
-    firstBPM = beatmap.beatmap['timingPoints'][0]['bpm']
+    #firstObjectTime = hitObjects[0]['startTime']
+    #firstBPM = beatmap.beatmap['timingPoints'][0]['bpm']
 
     # Load a replay
     replay = Replay.from_path(replayPath)
@@ -103,7 +103,7 @@ def calculateHitPlace(replayPath, mapPath):
         # main logic
         # There is a problem of stack leniency, but ??
         hitFrameNo = None
-        while frames[frameNo].time <= hitWindowEndTime and frameNo < len(frames):
+        while frameNo < len(frames) and frames[frameNo].time <= hitWindowEndTime:
             thisFrame = frames[frameNo]
             lastKey = frames[frameNo-1].keys if frameNo >= 0 else Key(0)
             pressedKey = getKey(lastKey, thisFrame.keys)
