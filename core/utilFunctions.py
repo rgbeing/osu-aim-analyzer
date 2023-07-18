@@ -30,6 +30,6 @@ def vectorToAngle(x, y):
     cos_theta = x / r
     theta = math.acos(cos_theta)
     if y < 0:
-        theta -= 2 * math.pi
+        theta *= -1
     
     return theta

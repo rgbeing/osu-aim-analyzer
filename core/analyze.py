@@ -124,14 +124,24 @@ def explainByDirections(parsedReplay):
             / thisApproachTime
         weights.append(max(intervalVelocity, approachVelocity))
         
-        actualDirections.append(vectorToAngle(\
+        # A vector whose direction is around pi can be interpretted both pi or -pi.
+        # Hence if the difference between player's aim vector and object's vector is large(r than pi here)
+        # There must be some further inspection.
+        actualDirectionThis = vectorToAngle(\
             curObj['position'][0] - prevObj['position'][0], curObj['position'][1] - prevObj['position'][1]\
-            ))
+            )
+        actualDirections.append(actualDirectionThis)
 
-        aimDirections.append(vectorToAngle(\
+        aimDirectionThis = vectorToAngle(\
             curObj['hitPosition'][0] - prevObj['hitPosition'][0], curObj['hitPosition'][1] - prevObj['hitPosition'][1]\
-            ))
-        
+            )
+        if abs(actualDirectionThis - aimDirectionThis) > 3.1415:
+            if actualDirectionThis > 0:
+                aimDirectionThis += math.pi * 2
+            else:
+                aimDirectionThis -= math.pi * 2
+        aimDirections.append(aimDirectionThis)
+    
     return [(aimDirections, actualDirections)]
 
 def analyzeByOLS(data, addConstant=True):
