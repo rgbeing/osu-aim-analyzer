@@ -3,9 +3,12 @@
 This is a program to inspect a replay and diagnose player's aim.
 
 ## Appreciation
-This program includes the whole source file of [Awlexus](https://github.com/Awlexus)'s [python-osu-parser](https://github.com/Awlexus/python-osu-parser). They are located on *osuparse* folder under *core* folder.
+This program includes the whole source file of [Awlexus](https://github.com/Awlexus)'s [python-osu-parser](https://github.com/Awlexus/python-osu-parser), located on *osuparse* folder under *core* folder.
 
 ## Download
+Check the *Release* page!
+
+*AimAnalyzer.zip* file will be there. Download and unzip it, and open *AimAnalyzer.exe* inside it.
 
 ## How To Use
 If you open the AimAnalyzer.exe, you will look this window:
@@ -74,6 +77,20 @@ Similar to the *Wideness* tab, the **pink** rectangle shows the original playfie
 3. To offset *rotatedness*:
 * If it says it is rotated *clockwise*, then rotate your tablet area *clockwise*. In OpenTabletDriver, this will increase your rotation value.
 * If it says it is rotated *anticlockwise*, then rotate your tablet area *anticlockwise*. In OpenTabletDriver, this will decrease your rotation value.
+
+## Bits of not important theoretical background
+
+### What osu! objects is this program inspect?
+This program inspect only **circles which have enough distance with the previous object**. This is because:
+* Inspecting spinners to check one's aim has no point!
+* Regarding sliders, there are cases that player *intentionally* click the non-center place of an object. For example:
+    * hitting those super fast sliders in [Ocelot - KAEDE [EX EX]](https://osu.ppy.sh/beatmapsets/660630#osu/1398809).
+        ![](./images/kaede.png)
+* Regarding not well-distanced circles, they are doubted to be a part of a stream. For a stream, there are also cases that player *intentionally* click the non-center place of an object. For example:
+    * hitting this stream in [xi - Ascension to Heaven [Death]](https://osu.ppy.sh/beatmapsets/34348#osu/111680).
+        ![](./images/ascension.png)
+
+Of course, there are also cases that players hit non-center place of a circle, but I believe that these heuristics work fine.
 
 ## Feedback & Bug Reports
 Feedback and bug reports are welcomed via any means. You can use issue tab of this repo, or directly contact to me via osu! PM or my discord(username: repo2x).

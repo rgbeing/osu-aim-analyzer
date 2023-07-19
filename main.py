@@ -1,6 +1,8 @@
 import sys
+import traceback
+
 from PyQt6 import QtWidgets, uic
-from PyQt6.QtWidgets import QFileDialog, QDialog
+from PyQt6.QtWidgets import QFileDialog, QDialog, QMessageBox
 from PyQt6.QtGui import QIcon, QFont
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -12,8 +14,6 @@ from ResultWindow import Ui_ResultWindow
 
 import core.analyze as analyzer
 import core.hitCalculator as calculator
-
-import numpy as np
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -78,33 +78,39 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def load(self):
         self.progressBar.setValue(0)
 
-        # parse raw results
-        res = calculator.calculateHitPlace(self.replays[0], self.maps[0])
-        rawResultList = []
-        for obj in res['hitObjects']:
-            if obj['object_name'] == 'spinner':
-                rawResultList.append("Object: spinner\tPressed: None")
-            else:
-                if obj['hitTime']:
-                    rawResultList.append("Time {} - Object: ({}, {})\tPressed: ({}, {}) @ {}".format(obj['startTime'], obj['position'][0], obj['position'][1], obj['hitPosition'][0], obj['hitPosition'][1], obj['hitTime']))
+        try:
+            # parse raw results
+            res = calculator.calculateHitPlace(self.replays[0], self.maps[0])
+            rawResultList = []
+            for obj in res['hitObjects']:
+                if obj['object_name'] == 'spinner':
+                    rawResultList.append("Object: spinner\tPressed: None")
                 else:
-                    rawResultList.append("Time {} - Object: ({}, {})\tPressed: Not Pressed".format(obj['startTime'], obj['position'][0], obj['position'][1]))
-        rawResult = '\n'.join(rawResultList)
-        self.progressBar.setValue(33)
+                    if obj['hitTime']:
+                        rawResultList.append("Time {} - Object: ({}, {})\tPressed: ({}, {}) @ {}".format(obj['startTime'], obj['position'][0], obj['position'][1], obj['hitPosition'][0], obj['hitPosition'][1], obj['hitTime']))
+                    else:
+                        rawResultList.append("Time {} - Object: ({}, {})\tPressed: Not Pressed".format(obj['startTime'], obj['position'][0], obj['position'][1]))
+            rawResult = '\n'.join(rawResultList)
+            self.progressBar.setValue(33)
 
-        skewed_data = analyzer.explainByCoordinates(res)
-        skewed_models = analyzer.analyzeByOLS(skewed_data, addConstant=True)
-        self.progressBar.setValue(66)
+            skewed_data = analyzer.explainByCoordinates(res)
+            skewed_models = analyzer.analyzeByOLS(skewed_data, addConstant=True)
+            self.progressBar.setValue(66)
+            
+            rotated_data = analyzer.explainByDirections(res)
+            rotated_models = analyzer.analyzeByOLS(rotated_data, addConstant=True)
+            self.progressBar.setValue(100)
+
+            dlg = ResultWindow(skewed_models, rotated_models, rawResult)
+            dlg.exec()
+        except Exception as e:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Critical)
+            msg.setText("Error occured! \n")
+            msg.setInformativeText(traceback.format_exc())
+            msg.setWindowTitle("Error")
+            msg.exec()
         
-        rotated_data = analyzer.explainByDirections(res)
-        rotated_models = analyzer.analyzeByOLS(rotated_data, addConstant=True)
-        self.progressBar.setValue(100)
-
-        #print(models[0].fit().summary())
-        #print(models[1].fit().summary())
-
-        dlg = ResultWindow(skewed_models, rotated_models, rawResult)
-        dlg.exec()
 
 class ResultWindow(QDialog, Ui_ResultWindow):
     def __init__(self, modelsSkewed, modelsRotated, rawResult, parent=None, *args, obj=None, **kwargs):
