@@ -8,7 +8,7 @@ This program includes the whole source file of [Awlexus](https://github.com/Awle
 ## Download
 Check the *Release* page!
 
-*AimAnalyzer.zip* file will be there. Download and unzip it, and open *AimAnalyzer.exe* inside it.
+If you click the version, *AimAnalyzer.zip* file will be there. Download and unzip it, and open *AimAnalyzer.exe* inside it. It might take few seconds to start.
 
 ## How To Use
 If you open the AimAnalyzer.exe, you will look this window:
@@ -63,24 +63,29 @@ Similar to the *Wideness* tab, the **pink** rectangle shows the original playfie
 ## (Possible) Application for Diagnosis of Players' Tablet Range
 0. Check *Raw* tab first, to see if the parsing process is done successfully.
 
-1. It is recommended to offset *skewedness* first. However, in my experience, skewedness does not affect your aim accuracy very much, so you may ignore the *Skewedness* part unless you feels uncomfortable for the current range? (This is no more than my experience indeed)
-* If the result have red color, then you can just ignore that as that is an unsignificant result.
-* If the tool says it is skewed *leftward*, then move your tablet range *leftward*. In OpenTabletDriver, this will decrease the x-coordinate of the tablet range. Vice versa for the *rightward* case.
-* If the tool says it is skewed *upward*, then move your tablet range *upward*. In OpenTabletDriver, this will decrease the y-coordinate of the tablet range. Vice versa for the *downward* case.
+1. To diagnose your tablet range, Basically think of moving *pink* rectangle to the fixed *blue* rectangle. There is a simple cheatsheet:
 
-2. To offset *wideness*, it is quiet straightforward:
-* Of course, if the result have red color, then you can just ignore that as that is an unsignificant result.
-* If you horizontally overaim, decrease the width. Vice versa for the underaim case.
-* If you vertically overaim, decrease the height. Vice versa for the underaim case.
-* You may want to keep the width-height ratio same to the playfield. Then do so (actually I do so).
+|If this tool says...|Then try this|
+|---|---|
+|Skewed leftward|Move your range left|
+|Skewed rightward|Move your range right|
+|Skewed upward|Move your range upward|
+|Skewed downward|Move your range downward|
+|Horizontally overaim|Increase the width of your range|
+|Horizontally underaim|Decrease the width of your range|
+|Vertically overaim|Increase the height of your range|
+|Vertically underaim|Decrease the height of your range|
+|Rotated clockwise|Rotate your range clockwise|
+|Rotated anticlockwise|Rotate your range anticlockwise|
 
-3. To offset *rotatedness*:
-* If it says it is rotated *clockwise*, then rotate your tablet area *clockwise*. In OpenTabletDriver, this will increase your rotation value.
-* If it says it is rotated *anticlockwise*, then rotate your tablet area *anticlockwise*. In OpenTabletDriver, this will decrease your rotation value.
+Of course, if the result is in *red* color, you may ignore the result; if it is in *green* color, you may want to take the result.
+
+Note that it is recommended to offset *skewedness* first, but in my opinion (it's just really an opinion indeed), skewedness is not so important factor, so you may ignore it.
+Furthermore, it is recommended to analyze multiple replays before you change your range (though it's up to you).
 
 ## Bits of not important theoretical background
 
-### What osu! objects is this program inspect?
+### What osu! objects does this program inspect?
 This program inspect only **circles which have enough distance with the previous object**. This is because:
 * Inspecting spinners to check one's aim has no point!
 * Regarding sliders, there are cases that player *intentionally* click the non-center place of an object. For example:
