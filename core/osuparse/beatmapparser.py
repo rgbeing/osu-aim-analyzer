@@ -257,7 +257,7 @@ class BeatmapParser():
         members = line.split(',')
 
         if members[0] == '0' and members[1] == '0' and members[2]:
-            bg_name = members[2].trim()
+            bg_name = members[2].strip()
 
             if bg_name[0] == '"' and bg_name[len(bg_name) - 1] == '"':
                 self.beatmap["bg_filename"] = bg_name.substring(1, bg_name.length - 1)
