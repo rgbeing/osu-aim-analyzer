@@ -83,12 +83,12 @@ class BeatmapParser():
             "offset": int(float(members[0])),
             "beatLength": float(members[1]),
             "velocity": 1,
-            "timingSignature": int(members[2]),
-            "sampleSetId": int(members[3]),
-            "customSampleIndex": int(members[4]),
-            "sampleVolume": int(members[5]),
-            "timingChange": (members[6] == 1),
-            "kiaiTimeActive": (members[7] == 1)
+            "timingSignature": int(members[2] if len(members) >= 3 else False),
+            "sampleSetId": int(members[3] if len(members) >= 4 else False),
+            "customSampleIndex": int(members[4] if len(members) >= 5 else False),
+            "sampleVolume": int(members[5] if len(members) >= 6 else False),
+            "timingChange": (members[6] == 1 if len(members) >= 7 else False),
+            "kiaiTimeActive": (members[7] == 1 if len(members) >= 8 else False)
         }
 
         if not math.isnan(timing_point["beatLength"]) and timing_point["beatLength"] != 0:
@@ -230,7 +230,7 @@ class BeatmapParser():
             # get coordinates of the slider endpoint
             end_point = slidercalc.get_end_point(hit_object["curveType"], hit_object["pixelLength"],
                                                  hit_object["points"])
-            if end_point and end_point[0] and end_point[1]:
+            if end_point and end_point != 'undefined' and end_point[0] and end_point[1]:
                 hit_object["end_position"] = [
                     round(end_point[0]),
                     round(end_point[1])
@@ -373,6 +373,10 @@ class BeatmapParser():
         self.beatmap["hitObjects"].sort(key=lambda a: a["startTime"])
         self.compute_max_combo()
         self.compute_duration()
+
+        if not "ApproachRate" in self.beatmap:
+            self.beatmap["ApproachRate"] = 6 # old maps do not have ApproachRate
+
         return self.beatmap
 
         # return {
