@@ -39,7 +39,7 @@ def explainByCoordinates(parsedReplay):
         if distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1]) < thisCircleSize * 4:
             continue
         # the circle was not hit
-        if curObj['hitTime'] == None:
+        if not ('hitTime' in curObj) or curObj['hitTime'] == None:
             continue
 
         intervalVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
@@ -115,7 +115,7 @@ def explainByDirections(parsedReplay):
         if distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1]) < thisCircleSize * 4:
             continue
         # both of the current and previous circle must be hit
-        if curObj['hitTime'] == None or prevObj['hitTime'] == None:
+        if not ('hitTime' in curObj) or not ('hitTime' in prevObj) or curObj['hitTime'] == None or prevObj['hitTime'] == None:
             continue
 
         intervalVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\

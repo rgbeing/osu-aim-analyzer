@@ -97,5 +97,17 @@ This program inspect only **circles which have enough distance with the previous
 
 Of course, there are also cases that players hit non-center place of a circle, but I believe that these heuristics work fine.
 
+### What click events does this program inspect?
+As you know, not all misaims are due to the inaccuracy of your aim; it might be the result of misreading, hardware problems, or something else.
+But to enhance the accuracy of analyzing, we may want to consider only misaims due to the inaccuracy of aiming.
+To solve this problem, this program introduced a simple heuristic:
+- Only clicking events clicked near an objects (actually <code>2 x CS of a map</code>) are accounted.
+
+This heuristic is expected to prevent some bone-head misses from being analyzed.
+
+### Possible inaccuracy
+I did not implemented stack leniency because streams are not regarded in this program. But there can be inaccuracy due to this point. 
+I will implement it someday, then I will remove this paragraph.
+
 ## Feedback & Bug Reports
 Feedback and bug reports are welcomed via any means. You can use issue tab of this repo, or directly contact to me via osu! PM or my discord(username: repo2x).

@@ -137,5 +137,10 @@ def calculateHitPlace(replayPath, mapPath):
             obj['hitTime'] = None
             obj['hitPosition'] = None
     
+    for obj in hitObjects:
+        if not ('hitTime' in obj) or not ('hitPosition' in obj):
+            obj['hitTime'] = None
+            obj['hitPosition'] = None
+    
     return beatmap.beatmap
 

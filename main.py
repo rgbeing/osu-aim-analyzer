@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if obj['object_name'] == 'spinner':
                     rawResultList.append("Object: spinner\tPressed: None")
                 else:
-                    if obj['hitTime']:
+                    if ('hitTime' in obj) and obj['hitTime']:
                         rawResultList.append("Time {} - Object: ({}, {})\tPressed: ({}, {}) @ {}".format(obj['startTime'], obj['position'][0], obj['position'][1], obj['hitPosition'][0], obj['hitPosition'][1], obj['hitTime']))
                     else:
                         rawResultList.append("Time {} - Object: ({}, {})\tPressed: Not Pressed".format(obj['startTime'], obj['position'][0], obj['position'][1]))
