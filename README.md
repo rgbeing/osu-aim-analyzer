@@ -1,6 +1,6 @@
 # Osu! Aim Analyzer
 
-This is a program to inspect a replay and diagnose player's aim.
+This is a program to inspect replays and diagnose player's aim.
 
 ## Appreciation
 This program includes the whole source file of [Awlexus](https://github.com/Awlexus)'s [python-osu-parser](https://github.com/Awlexus/python-osu-parser), located on *osuparse* folder under *core* folder.
