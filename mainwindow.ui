@@ -30,171 +30,162 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetMaximumSize</enum>
-        </property>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Replays</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <widget class="QLineEdit" name="replayLine_1"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="replayBrowse_1">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QLineEdit" name="replayLine_2"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="replayBrowse_2">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_9">
-            <item>
-             <widget class="QLineEdit" name="replayLine_3"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="replayBrowse_3">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_8">
-            <item>
-             <widget class="QLineEdit" name="replayLine_4"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="replayBrowse_4">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLineEdit" name="replayLine_5"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="replayBrowse_5">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="3" column="1">
+         <widget class="DroppableQLineEdit" name="replayLine_3"/>
         </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Maps</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_16">
-            <item>
-             <widget class="QLineEdit" name="mapLine_1"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="mapBrowse_1">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15">
-            <item>
-             <widget class="QLineEdit" name="mapLine_2"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="mapBrowse_2">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_14">
-            <item>
-             <widget class="QLineEdit" name="mapLine_3"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="mapBrowse_3">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLineEdit" name="mapLine_4"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="mapBrowse_4">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_13">
-            <item>
-             <widget class="QLineEdit" name="mapLine_5"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="mapBrowse_5">
-              <property name="text">
-               <string>Browse...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="replayBrowse_1">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="mapBrowse_1">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="DroppableQLineEdit" name="replayLine_4"/>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Maps</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QPushButton" name="replayBrowse_4">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="DroppableQLineEdit" name="mapLine_4"/>
+        </item>
+        <item row="3" column="4">
+         <widget class="QPushButton" name="mapBrowse_3">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="3">
+         <widget class="DroppableQLineEdit" name="mapLine_5"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="DroppableQLineEdit" name="replayLine_5"/>
+        </item>
+        <item row="2" column="4">
+         <widget class="QPushButton" name="mapBrowse_2">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="DroppableQLineEdit" name="mapLine_2"/>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="replayBrowse_3">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="DroppableQLineEdit" name="replayLine_1"/>
+        </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="replayBrowse_5">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Replays</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="DroppableQLineEdit" name="replayLine_2"/>
+        </item>
+        <item row="3" column="3">
+         <widget class="DroppableQLineEdit" name="mapLine_3"/>
+        </item>
+        <item row="5" column="4">
+         <widget class="QPushButton" name="mapBrowse_5">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="DroppableQLineEdit" name="mapLine_1"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="replayBrowse_2">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="4">
+         <widget class="QPushButton" name="mapBrowse_4">
+          <property name="text">
+           <string>Browse...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Include</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="checkBox_1">
+          <property name="text">
+           <string>1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="text">
+           <string>2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="checkBox_3">
+          <property name="text">
+           <string>3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="checkBox_4">
+          <property name="text">
+           <string>4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="checkBox_5">
+          <property name="text">
+           <string>5</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -249,6 +240,13 @@ Suggestions &amp; bug reports are welcomed via osu! PM, or Discord: repo2x, or e
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DroppableQLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>customWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -6,6 +6,7 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.transforms import Affine2D
+import matplotlib.axes
 import seaborn as sns
 
 from osrparse import Replay, parse_replay_data
@@ -18,41 +19,42 @@ from utilFunctions import *
 from hitCalculator import *
 
 
-def explainByCoordinates(parsedReplay):
+def explainByCoordinates(parsedReplays):
     errors = ([], [])
     positions = ([], [])
     weights = []
 
-    thisApproachTime = approachTime(parsedReplay['replayApproachRate'])
-    thisCircleSize = parsedReplay['replayCircleSize']
-    hitObjects = parsedReplay['hitObjects']
+    for parsedReplay in parsedReplays:
+        thisApproachTime = approachTime(parsedReplay['replayApproachRate'])
+        thisCircleSize = parsedReplay['replayCircleSize']
+        hitObjects = parsedReplay['hitObjects']
 
-    for i in range(len(hitObjects)):
-        prevObj, curObj = hitObjects[i-1], hitObjects[i]
-        # only circles are analysed
-        if curObj['object_name'] != 'circle':
-            continue
-        # interval is too long to analyze
-        if curObj['startTime'] - prevObj['startTime'] > 2000:
-            continue
-        # doubted to be a stream (distance is less than 2 * circle-diameter)
-        if distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1]) < thisCircleSize * 4:
-            continue
-        # the circle was not hit
-        if not ('hitTime' in curObj) or curObj['hitTime'] == None:
-            continue
+        for i in range(len(hitObjects)):
+            prevObj, curObj = hitObjects[i-1], hitObjects[i]
+            # only circles are analysed
+            if curObj['object_name'] != 'circle':
+                continue
+            # interval is too long to analyze
+            if curObj['startTime'] - prevObj['startTime'] > 2000:
+                continue
+            # doubted to be a stream (distance is less than 2 * circle-diameter)
+            if distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1]) < thisCircleSize * 4:
+                continue
+            # the circle was not hit
+            if curObj['hitTime'] == None:
+                continue
 
-        intervalVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
-            / (curObj['startTime'] - prevObj['startTime'])
-        approachVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
-            / thisApproachTime
-        weights.append(max(intervalVelocity, approachVelocity))
-        
-        positions[0].append(curObj['position'][0])
-        positions[1].append(curObj['position'][1])
+            intervalVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
+                / (curObj['startTime'] - prevObj['startTime'])
+            approachVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
+                / thisApproachTime
+            weights.append(max(intervalVelocity, approachVelocity))
 
-        errors[0].append(curObj['hitPosition'][0] - curObj['position'][0])
-        errors[1].append(curObj['hitPosition'][1] - curObj['position'][1])
+            positions[0].append(curObj['position'][0])
+            positions[1].append(curObj['position'][1])
+
+            errors[0].append(curObj['hitPosition'][0] - curObj['position'][0])
+            errors[1].append(curObj['hitPosition'][1] - curObj['position'][1])
         
     return ((errors[0], positions[0]), (errors[1], positions[1]))
 
@@ -94,53 +96,54 @@ def explainByVectors(parsedReplay):
         
     return ((errors[0], vectors[0]), (errors[1], vectors[1]))
 
-def explainByDirections(parsedReplay):
+def explainByDirections(parsedReplays):
     aimDirections = []
     actualDirections = []
     weights = []
 
-    thisApproachTime = approachTime(parsedReplay['replayApproachRate'])
-    thisCircleSize = parsedReplay['replayCircleSize']
-    hitObjects = parsedReplay['hitObjects']
+    for parsedReplay in parsedReplays:
+        thisApproachTime = approachTime(parsedReplay['replayApproachRate'])
+        thisCircleSize = parsedReplay['replayCircleSize']
+        hitObjects = parsedReplay['hitObjects']
 
-    for i in range(1, len(hitObjects)):
-        prevObj, curObj = hitObjects[i-1], hitObjects[i]
-        # only circles are analysed
-        if prevObj['object_name'] != 'circle' or curObj['object_name'] != 'circle':
-            continue
-        # interval is too long to analyze
-        if curObj['startTime'] - prevObj['startTime'] > 2000:
-            continue
-        # doubted to be a stream (distance is less than 2 * circle-diameter)
-        if distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1]) < thisCircleSize * 4:
-            continue
-        # both of the current and previous circle must be hit
-        if not ('hitTime' in curObj) or not ('hitTime' in prevObj) or curObj['hitTime'] == None or prevObj['hitTime'] == None:
-            continue
+        for i in range(1, len(hitObjects)):
+            prevObj, curObj = hitObjects[i-1], hitObjects[i]
+            # only circles are analysed
+            if prevObj['object_name'] != 'circle' or curObj['object_name'] != 'circle':
+                continue
+            # interval is too long to analyze
+            if curObj['startTime'] - prevObj['startTime'] > 2000:
+                continue
+            # doubted to be a stream (distance is less than 2 * circle-diameter)
+            if distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1]) < thisCircleSize * 4:
+                continue
+            # both of the current and previous circle must be hit
+            if not ('hitTime' in curObj) or not ('hitTime' in prevObj) or curObj['hitTime'] == None or prevObj['hitTime'] == None:
+                continue
 
-        intervalVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
-            / (curObj['startTime'] - prevObj['startTime'])
-        approachVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
-            / thisApproachTime
-        weights.append(max(intervalVelocity, approachVelocity))
-        
-        # A vector whose direction is around pi can be interpretted both pi or -pi.
-        # Hence if the difference between player's aim vector and object's vector is large(r than pi here)
-        # There must be some further inspection.
-        actualDirectionThis = vectorToAngle(\
-            curObj['position'][0] - prevObj['position'][0], curObj['position'][1] - prevObj['position'][1]\
-            )
-        actualDirections.append(actualDirectionThis)
+            intervalVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
+                / (curObj['startTime'] - prevObj['startTime'])
+            approachVelocity = distance2D(prevObj['position'][0], prevObj['position'][1], curObj['position'][0], curObj['position'][1])\
+                / thisApproachTime
+            weights.append(max(intervalVelocity, approachVelocity))
+            
+            # A vector whose direction is around pi can be interpretted both pi or -pi.
+            # Hence if the difference between player's aim vector and object's vector is large(r than pi here)
+            # There must be some further inspection.
+            actualDirectionThis = vectorToAngle(\
+                curObj['position'][0] - prevObj['position'][0], curObj['position'][1] - prevObj['position'][1]\
+                )
+            actualDirections.append(actualDirectionThis)
 
-        aimDirectionThis = vectorToAngle(\
-            curObj['hitPosition'][0] - prevObj['hitPosition'][0], curObj['hitPosition'][1] - prevObj['hitPosition'][1]\
-            )
-        if abs(actualDirectionThis - aimDirectionThis) > 3.1415:
-            if actualDirectionThis > 0:
-                aimDirectionThis += math.pi * 2
-            else:
-                aimDirectionThis -= math.pi * 2
-        aimDirections.append(aimDirectionThis)
+            aimDirectionThis = vectorToAngle(\
+                curObj['hitPosition'][0] - prevObj['hitPosition'][0], curObj['hitPosition'][1] - prevObj['hitPosition'][1]\
+                )
+            if abs(actualDirectionThis - aimDirectionThis) > 3.1415:
+                if actualDirectionThis > 0:
+                    aimDirectionThis += math.pi * 2
+                else:
+                    aimDirectionThis -= math.pi * 2
+            aimDirections.append(aimDirectionThis)
     
     return [(aimDirections, actualDirections)]
 
@@ -188,9 +191,12 @@ def plotCoordinatesDiagnosis(models, ax=None):
     y_zero = -((models[1].fit().params)[0] / (models[1].fit().params)[1])
     ax.plot([x_zero], [y_zero], marker="x")
 
+    ax.text(0, -150, "pink is the original field", color='deeppink')
+    ax.text(0, -200, "blue is your field", color='blue')
+
     return ax
 
-def plotDirectionsDiagnosis(models, ax=None):
+def plotDirectionsDiagnosis(models, ax:matplotlib.axes.Axes=None):
     realPlayfield = Rectangle((0, 0), 512, 384, fill=False, edgecolor = 'deeppink')
     playerPlayfield = Rectangle((0, 0), 512, 384, fill=False, edgecolor = 'blue')
 
@@ -202,6 +208,9 @@ def plotDirectionsDiagnosis(models, ax=None):
     ax.add_patch(playerPlayfield)
 
     ax.plot([256], [192], marker='.', color='black')
+
+    ax.text(0, -150, "pink is the original field", color='deeppink')
+    ax.text(0, -200, "blue is your field", color='blue')
 
     return ax
     
