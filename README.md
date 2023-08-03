@@ -5,6 +5,8 @@ This is a program to inspect replays and diagnose player's aim.
 ## Appreciation
 This program includes the whole source file of [Awlexus](https://github.com/Awlexus)'s [python-osu-parser](https://github.com/Awlexus/python-osu-parser), located on *osuparse* folder under *core* folder.
 
+The idea of *rotatedness* and the concept of applying this to offset tablet range is heaviliy affected by [Mirei Hayasaka](https://osu.ppy.sh/users/5247450), the source is [here (Korean)](https://osu.ppy.sh/users/5247450).
+
 ## Download
 Check the *Release* page!
 
@@ -13,9 +15,11 @@ If you click the version, *AimAnalyzer.zip* file will be there. Download and unz
 ## How To Use
 If you open the AimAnalyzer.exe, you will look this window:
 ![Main Window](./images/use_1.png)
-Quite straightforward, input a replay file(.osr) you want to inspect by the *Browse...* button on Replays tab, and input the corresponding map file on Maps tab. Then click the *Load* button on the right side.
+There is *Songs Folder* section. If you put songs folder there and load it, this tool can find the maps from the given replays. Make sure to input the correct osu! Songs folder, and then click *Load* button to use this feature.
 
-Unfortunately, slot #2~#5 is not implemented yet, so they are not available currently. You can inspect one replay per a run now.
+To inspect replays, input a replay file(.osr) you want to inspect by the *Browse...* button on Replays tab, and input the corresponding map file on Maps tab. If you loaded songs folder on the above section, and left a map file blank, then this tool will try to find the map corresponding to the given replay automatically. Make sure to click *Include* checkbox on the left side to include that replay in analyzing.
+
+Finally, click the *Load* button on the right side.
 
 When the replay is loaded, the program will show you the following window.
 ![Result Window](./images/use_2.png)
@@ -59,6 +63,21 @@ Rotatedness tab shows you **how much your aim is rotated** on average.
 ![Rotatedness tab](./images/use_5.png)
 
 Similar to the *Wideness* tab, the **pink** rectangle shows the original playfield, and the **blue** rectangle shows your average playfield compared to the original playfield. The black dot is the center of the playfield.
+
+### settings.json
+```
+{
+  "songsFolder": "C:\\Program Files (x86)\\osu!\\Songs",
+  "replaysFolder": "C:\\Program Files (x86)\\osu!\\Replays"
+}
+```
+Note: backslashes must be written twice (like the above example).
+* songsFolder: default songs folder path. This will be written here:
+![Settings_songsFolder](./images/settings_1.png)
+
+* replaysFolder: default replays folder path. This will be used here:
+![Settings_replaysFolder](./images/settings_2.png)
+
 
 ## (Possible) Application for Diagnosis of Players' Tablet Range
 0. Check *Raw* tab first, to see if the parsing process is done successfully.

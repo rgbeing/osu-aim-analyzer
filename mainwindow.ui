@@ -32,7 +32,7 @@
       <item>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="2">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="songsFolderBrowse">
           <property name="text">
            <string>Browse...</string>
           </property>
@@ -46,17 +46,17 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="DroppableQLineEdit" name="songsFolderLine"/>
         </item>
         <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton_2">
+         <widget class="QPushButton" name="songsFolderLoadButton">
           <property name="text">
            <string>Load</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QProgressBar" name="progressBar_2">
+         <widget class="QProgressBar" name="songsFolderProgressBar">
           <property name="value">
            <number>0</number>
           </property>
@@ -120,7 +120,7 @@
         <item row="0" column="3">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Maps</string>
+           <string>Maps (leave blank to auto-find maps)</string>
           </property>
          </widget>
         </item>
@@ -253,7 +253,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QPushButton" name="loadButton">
+           <widget class="QPushButton" name="replaysLoadButton">
             <property name="text">
              <string>Load</string>
             </property>
@@ -267,8 +267,21 @@
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Made by Repo
-osu.ppy.sh/users/2365927 | github.com/rgbeing
+osu.ppy.sh/users/2365927 | github.com/rgbeing/osu-aim-analyzer
 Suggestions &amp; bug reports are welcomed via osu! PM, or Discord: repo2x, or elsewhere.</string>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="updateCheckLabel">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
         </property>
        </widget>
       </item>

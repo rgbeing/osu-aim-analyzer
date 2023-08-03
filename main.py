@@ -1,5 +1,10 @@
-import sys
+import sys, os
 import traceback
+import json
+import pickle
+import http.client
+
+from osrparse import Replay
 
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import Qt
@@ -15,6 +20,8 @@ from ResultWindow import Ui_ResultWindow
 
 import core.analyze as analyzer
 import core.hitCalculator as calculator
+from core.beatmaphashlib import SongsFolderLibrary
+from version import *
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, obj=None, **kwargs):
@@ -24,20 +31,25 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowTitle("osu! Aim Analyzer")
         self.setWindowIcon(QIcon("assets/icon.png"))
 
-        #self.replays = [None] * 5
-        #self.maps = [None] * 5
+        # load settings.json
+        settingsJson = self.loadSettingsJSON()
+        if self.songsFolderLine and "songsFolder" in settingsJson:
+            self.songsFolderLine.setText(settingsJson["songsFolder"])
+        self.replayFolderPath = settingsJson["replaysFolder"] if ("replaysFolder" in settingsJson) else "c:\\"
+        
+        # load beatmaphashes.dat if it exists
+        self.beatmapHashLib: SongsFolderLibrary | None = self.loadLibraryPickle()
 
+        # load songs folder
+        self.songsFolderBrowse.clicked.connect(self.getSongsFolder)
+        self.songsFolderLoadButton.clicked.connect(self.getLibraryFromLine)
+
+        # replays & maps line
         self.replayLine_1.setReadOnly(True)
         self.replayLine_2.setReadOnly(True)
         self.replayLine_3.setReadOnly(True)
         self.replayLine_4.setReadOnly(True)
         self.replayLine_5.setReadOnly(True)
-
-        self.mapLine_1.setReadOnly(True)
-        self.mapLine_2.setReadOnly(True)
-        self.mapLine_3.setReadOnly(True)
-        self.mapLine_4.setReadOnly(True)
-        self.mapLine_5.setReadOnly(True)
 
         self.checkBox_1.setCheckState(Qt.CheckState.Checked)
 
@@ -52,14 +64,60 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.replayBrowse_5.clicked.connect(lambda : self.getFileReplay(5))
         self.mapBrowse_5.clicked.connect(lambda: self.getFileMap(5))
 
-        self.loadButton.clicked.connect(self.load)
+        self.replaysLoadButton.clicked.connect(self.load)
+
+        # update checking
+        if self.isThisVersionLatest():
+            self.updateCheckLabel.setText("This is the latest version.")
+        else:
+            self.updateCheckLabel.setText("<span style=\" color:#aa0000;\"><b>New version has been released!</b></span> Visit <a href=https://github.com/rgbeing/osu-aim-analyzer>github.com/rgbeing/osu-aim-analyzer</a> to download it.")
+            self.updateCheckLabel.setOpenExternalLinks(True)
 
     def newWin(self):
         w = ResultWindow(None, None)
         w.show()
 
+    def loadSettingsJSON(self):
+        data = None
+        if os.path.exists("settings.json"):
+            with open("settings.json", 'r') as file:
+                data = json.load(file)
+        
+        return data
+    
+    def getSongsFolder(self):
+        dname = QFileDialog.getExistingDirectory(self, 'Open folder', 'c:\\')
+        if dname:
+            self.songsFolderLine.setText(dname)
+    
+    def loadLibraryPickle(self, pathname='beatmaphashes.dat'):
+        hashlib = None
+        if os.path.exists(pathname):
+            with open(pathname, 'rb') as file:
+                hashlib = pickle.load(file)
+        
+        return hashlib
+    
+    def getLibraryFromLine(self):
+        if self.beatmapHashLib and self.beatmapHashLib.songsFolderPath == self.songsFolderLine.text():
+            # no need to build the library from the scratch
+            self.beatmapHashLib.update()
+            self.songsFolderProgressBar.setValue(100)
+        else:
+            library = SongsFolderLibrary(songsFolderPath=self.songsFolderLine.text(), autoProcess=False)
+            beatmapFolderPathList = library.returnBeatmapsetList()
+            lenList = len(beatmapFolderPathList)
+
+            for idx, beatmapFolderPath in enumerate(beatmapFolderPathList):
+                library.processEachBeatmapset(beatmapFolderPath)
+                self.songsFolderProgressBar.setValue(int((idx + 1) * 100 / lenList))
+            library.setDateAsNow()
+
+            library.exportToCache()
+            self.beatmapHashLib = library
+
     def getFileReplay(self, i):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "osu! replay files (*.osr)")
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.replayFolderPath, "osu! replay files (*.osr)")
         if fname[0]:
             eval("self.replayLine_" + str(i) + ".setText(fname[0])")
             #self.replays[i-1] = fname[0]
@@ -69,10 +127,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if fname[0]:
             eval("self.mapLine_" + str(i) + ".setText(fname[0])")
             #self.maps[i-1] = fname[0]
+
+    def extractHashFromReplay(self, replayPath):
+        return Replay.from_path(replayPath).beatmap_hash
     
     def loadSlot(self, i):
         replayPath = (getattr(self, "replayLine_" + str(i))).text()
         mapPath = (getattr(self, "mapLine_" + str(i))).text()
+
+        if not mapPath:
+            try:
+                mapPath = self.beatmapHashLib.search(self.extractHashFromReplay(replayPath))
+                if not mapPath:
+                    raise Exception("Error occured auto-finding the corresponding map for the slot #{}".format(i))
+            except Exception as e:
+                raise
+
         res = calculator.calculateHitPlace(replayPath, mapPath)
         #res = calculator.calculateHitPlace(self.replays[i-1], self.maps[i-1])
 
@@ -125,6 +195,21 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             msg.setInformativeText(traceback.format_exc())
             msg.setWindowTitle("Error")
             msg.exec()
+    
+    def isThisVersionLatest(self):
+        host = "github.com"
+        conn = http.client.HTTPSConnection(host)
+        latest_version = VERSION
+
+        try:
+            conn.request("GET", "/rgbeing/osu-aim-analyzer/releases/latest")
+            response = conn.getresponse()
+            loc = response.headers["Location"]
+            latest_version = loc.split('/')[-1]
+        except:
+            pass
+        
+        return (VERSION == latest_version)
         
 
 class ResultWindow(QDialog, Ui_ResultWindow):
