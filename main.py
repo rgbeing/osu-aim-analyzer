@@ -33,9 +33,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # load settings.json
         settingsJson = self.loadSettingsJSON()
-        if self.songsFolderLine and "songsFolder" in settingsJson:
-            self.songsFolderLine.setText(settingsJson["songsFolder"])
-        self.replayFolderPath = settingsJson["replaysFolder"] if ("replaysFolder" in settingsJson) else "c:\\"
+        if "songsFolder" in settingsJson:
+            if settingsJson["songsFolder"]:
+                self.songsFolderLine.setText(settingsJson["songsFolder"])
+            else:
+                self.songsFolderLine.setText(os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Songs"))
+        if "replaysFolder" in settingsJson and settingsJson["replaysFolder"]:
+            self.replayFolderPath = settingsJson["replaysFolder"]
+        else:
+            self.replayFolderPath = os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Replays")
         
         # load beatmaphashes.dat if it exists
         self.beatmapHashLib: SongsFolderLibrary | None = self.loadLibraryPickle()
@@ -99,22 +105,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return hashlib
     
     def getLibraryFromLine(self):
-        if self.beatmapHashLib and self.beatmapHashLib.songsFolderPath == self.songsFolderLine.text():
-            # no need to build the library from the scratch
-            self.beatmapHashLib.update()
-            self.songsFolderProgressBar.setValue(100)
-        else:
-            library = SongsFolderLibrary(songsFolderPath=self.songsFolderLine.text(), autoProcess=False)
-            beatmapFolderPathList = library.returnBeatmapsetList()
-            lenList = len(beatmapFolderPathList)
+        try:
+            if self.beatmapHashLib and self.beatmapHashLib.songsFolderPath == self.songsFolderLine.text():
+                # no need to build the library from the scratch
+                self.beatmapHashLib.update()
+                self.songsFolderProgressBar.setValue(100)
+            else:
+                library = SongsFolderLibrary(songsFolderPath=self.songsFolderLine.text(), autoProcess=False)
+                beatmapFolderPathList = library.returnBeatmapsetList()
+                lenList = len(beatmapFolderPathList)
 
-            for idx, beatmapFolderPath in enumerate(beatmapFolderPathList):
-                library.processEachBeatmapset(beatmapFolderPath)
-                self.songsFolderProgressBar.setValue(int((idx + 1) * 100 / lenList))
-            library.setDateAsNow()
+                for idx, beatmapFolderPath in enumerate(beatmapFolderPathList):
+                    library.processEachBeatmapset(beatmapFolderPath)
+                    self.songsFolderProgressBar.setValue(int((idx + 1) * 100 / lenList))
+                library.setDateAsNow()
 
-            library.exportToCache()
-            self.beatmapHashLib = library
+                library.exportToCache()
+                self.beatmapHashLib = library
+        except:
+            msg = self.createErrorBox(traceback.format_exc())
+            msg.exec()
 
     def getFileReplay(self, i):
         fname = QFileDialog.getOpenFileName(self, 'Open file', self.replayFolderPath, "osu! replay files (*.osr)")
@@ -189,11 +199,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dlg.exec()
         
         except Exception as e:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Critical)
-            msg.setText("Error occured! \n")
-            msg.setInformativeText(traceback.format_exc())
-            msg.setWindowTitle("Error")
+            msg = self.createErrorBox(traceback.format_exc())
             msg.exec()
     
     def isThisVersionLatest(self):
@@ -210,6 +216,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             pass
         
         return (VERSION == latest_version)
+    
+    def createErrorBox(self, text):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Critical)
+        msg.setText("Error occured! \n")
+        msg.setInformativeText(text)
+        msg.setWindowTitle("Error")
+
+        return msg
         
 
 class ResultWindow(QDialog, Ui_ResultWindow):
@@ -282,14 +297,14 @@ class ResultWindow(QDialog, Ui_ResultWindow):
         y192 = round(ySkewedParams[0] + 192 * ySkewedParams[1], 4)
 
         if y192 < 0:
-            self.skewednessUpward.setText("skewed <em>upward</em> <strong>{}</strong> px".format(-y192))
+            self.skewednessUpward.setText("Skewed <em>upward</em> <strong>{}</strong> px".format(-y192))
         else:
-            self.skewednessUpward.setText("skewed <em>downward</em> <strong>{}</strong> px".format(y192))
+            self.skewednessUpward.setText("Skewed <em>downward</em> <strong>{}</strong> px".format(y192))
         
         if x256 > 0:
-            self.skewednessRightward.setText("skewed <em>rightward</em> <strong>{}</strong> px".format(x256))
+            self.skewednessRightward.setText("Skewed <em>rightward</em> <strong>{}</strong> px".format(x256))
         else:
-            self.skewednessRightward.setText("skewed <em>leftward</em> <strong>{}</strong> px".format(-x256))
+            self.skewednessRightward.setText("Skewed <em>leftward</em> <strong>{}</strong> px".format(-x256))
         
         skewednessRightwardPValue = (modelsSkewed[0].fit().pvalues)[0]
         skewednessUpwardPValue = (modelsSkewed[1].fit().pvalues)[0]
@@ -310,8 +325,8 @@ class ResultWindow(QDialog, Ui_ResultWindow):
         width = 512 * (1 + xSkewedParams[1])
         height = 384 * (1 + ySkewedParams[1])
 
-        horizontalAim = "Overaim" if width > 512 else "Underaim"
-        verticalAim = "Overaim" if height > 384 else "Underaim"
+        horizontalAim = "overaim" if width > 512 else "underaim"
+        verticalAim = "overaim" if height > 384 else "underaim"
 
         self.widenessHorizontal.setText("Horizontally <em>{}</em> <strong>{}</strong> %".format(horizontalAim, round(width/512 * 100, 2)))
         self.widenessVertical.setText("Vertically <em>{}</em> <strong>{}</strong> %".format(verticalAim, round(height/384 * 100, 2)))

@@ -197,6 +197,6 @@ class Ui_MainWindow(object):
         self.mapBrowse_2.setText(_translate("MainWindow", "Browse..."))
         self.replaysLoadButton.setText(_translate("MainWindow", "Load"))
         self.label_3.setText(_translate("MainWindow", "Made by Repo\n"
-"osu.ppy.sh/users/2365927 | github.com/rgbeing/osu-aim-analyzer\n"
+"osu.ppy.sh/users/2365927 | github.com/rgbeing\n"
 "Suggestions & bug reports are welcomed via osu! PM, or Discord: repo2x, or elsewhere."))
 from customWidgets import DroppableQLineEdit
