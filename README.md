@@ -1,16 +1,19 @@
 # Osu! Aim Analyzer
 
-This is a program to inspect replays and diagnose player's aim.
+This is a program to inspect replays and diagnose player's aim (using linear regression method).
 
 ## Appreciation
 This program includes the whole source file of [Awlexus](https://github.com/Awlexus)'s [python-osu-parser](https://github.com/Awlexus/python-osu-parser), located on *osuparse* folder under *core* folder.
 
-The idea of *rotatedness* and the concept of applying this to offset tablet range is heaviliy affected by [Mirei Hayasaka](https://osu.ppy.sh/users/5247450), the source is [here (Korean)](https://osu.ppy.sh/users/5247450).
+The idea of *rotatedness* and the concept of applying this to offset tablet range is heavily inspired by [Mirei Hayasaka](https://osu.ppy.sh/users/5247450), the source is [here (Korean)](https://osu.ppy.sh/users/5247450).
 
 ## Download
 Check the *Release* page!
 
 If you click the version, *AimAnalyzer.zip* file will be there. Download and unzip it, and open *AimAnalyzer.exe* inside it. It might take few seconds to start.
+
+### Update
+There is no auto update function currently, please re-download the zip file again.
 
 ## How To Use
 If you open the AimAnalyzer.exe, you will look this window:
