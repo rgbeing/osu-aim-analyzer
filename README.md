@@ -74,7 +74,7 @@ Similar to the *Wideness* tab, the **pink** rectangle shows the original playfie
   "replaysFolder": "C:\\Program Files (x86)\\osu!\\Replays"
 }
 ```
-Note: backslashes must be written twice (like the above example).
+Note: backslashes must be written twice (like the above example), or use a single slash(/).
 * songsFolder: default songs folder path. This will be written here:
 ![Settings_songsFolder](./images/settings_1.png)
 

@@ -33,10 +33,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # load settings.json
         settingsJson = self.loadSettingsJSON()
+        self.songsFolderPath = "c:\\"
         if "songsFolder" in settingsJson:
             if settingsJson["songsFolder"]:
+                self.songsFolderPath = settingsJson["songsFolder"]
                 self.songsFolderLine.setText(settingsJson["songsFolder"])
             else:
+                self.songsFolderPath = os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Songs")
                 self.songsFolderLine.setText(os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Songs"))
         if "replaysFolder" in settingsJson and settingsJson["replaysFolder"]:
             self.replayFolderPath = settingsJson["replaysFolder"]
@@ -95,6 +98,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dname = QFileDialog.getExistingDirectory(self, 'Open folder', 'c:\\')
         if dname:
             self.songsFolderLine.setText(dname)
+            self.songsFolderPath = dname
     
     def loadLibraryPickle(self, pathname='beatmaphashes.dat'):
         hashlib = None
@@ -133,7 +137,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #self.replays[i-1] = fname[0]
 
     def getFileMap(self, i):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "osu! map files (*.osu)")
+        fname = QFileDialog.getOpenFileName(self, 'Open file', self.songsFolderPath, "osu! map files (*.osu)")
         if fname[0]:
             eval("self.mapLine_" + str(i) + ".setText(fname[0])")
             #self.maps[i-1] = fname[0]
