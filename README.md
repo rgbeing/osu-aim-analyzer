@@ -5,7 +5,7 @@ This is a program to inspect replays and diagnose player's aim (using linear reg
 ## Appreciation
 This program includes the whole source file of [Awlexus](https://github.com/Awlexus)'s [python-osu-parser](https://github.com/Awlexus/python-osu-parser), located on *osuparse* folder under *core* folder.
 
-The idea of *rotatedness* and the concept of applying this to offset tablet range is heavily inspired by [Mirei Hayasaka](https://osu.ppy.sh/users/5247450), the source is [here (Korean)](https://osu.ppy.sh/users/5247450).
+The idea of *rotatedness* and the concept of applying this to offset tablet range is heavily inspired by [Mirei Hayasaka](https://osu.ppy.sh/users/5247450), the source is [here (Korean)](https://gall.dcinside.com/osustd/83410).
 
 ## Download
 Check the *Release* page!
