@@ -32,6 +32,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon("assets/icon.png"))
 
         # load settings.json
+        localAppDataPath = os.getenv('LOCALAPPDATA')
+        if localAppDataPath is None:
+            localAppDataPath = "c:\\"
+        
         settingsJson = self.loadSettingsJSON()
         self.songsFolderPath = "c:\\"
         if "songsFolder" in settingsJson:
@@ -39,12 +43,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.songsFolderPath = settingsJson["songsFolder"]
                 self.songsFolderLine.setText(settingsJson["songsFolder"])
             else:
-                self.songsFolderPath = os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Songs")
-                self.songsFolderLine.setText(os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Songs"))
+                self.songsFolderPath = os.path.join(localAppDataPath, "osu!\\Songs")
+                self.songsFolderLine.setText(self.songsFolderPath)
         if "replaysFolder" in settingsJson and settingsJson["replaysFolder"]:
             self.replayFolderPath = settingsJson["replaysFolder"]
         else:
-            self.replayFolderPath = os.path.join(os.getenv('LOCALAPPDATA'), "osu!\\Replays")
+            self.replayFolderPath = os.path.join(localAppDataPath, "osu!\\Replays")
         
         # load beatmaphashes.dat if it exists
         self.beatmapHashLib: SongsFolderLibrary | None = self.loadLibraryPickle()

@@ -6,9 +6,9 @@ block_cipher = None
 
 a = Analysis(
     ['main.py'],
-    pathex=['D:\\Coding\\python\\osu-aim-analyzer\\core'],
-    binaries=[('C:\\Users\\repo\\AppData\\Local\\Programs\\Python\\Python311\\python311.dll', '.')],
-    datas=[('.\\assets\\icon.png', '.'), ('.\\settings.json', '.')],
+    pathex=['./core'],
+    binaries=[],
+    datas=[('./assets/icon.png', '.'), ('./settings.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -24,7 +24,7 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    Tree('.\\assets', prefix='assets'),
+    Tree('./assets', prefix='assets'),
     [],
     exclude_binaries=True,
     name='AimAnalyzer',
@@ -38,7 +38,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['assets\\icon.ico'],
+    icon=['assets/icon.ico'],
 )
 coll = COLLECT(
     exe,
