@@ -11,7 +11,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QFileDialog, QDialog, QMessageBox
 from PyQt6.QtGui import QIcon, QFont
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
@@ -32,23 +32,29 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon("assets/icon.png"))
 
         # load settings.json
-        localAppDataPath = os.getenv('LOCALAPPDATA')
-        if localAppDataPath is None:
-            localAppDataPath = "c:\\"
-        
-        settingsJson = self.loadSettingsJSON()
-        self.songsFolderPath = "c:\\"
-        if "songsFolder" in settingsJson:
-            if settingsJson["songsFolder"]:
-                self.songsFolderPath = settingsJson["songsFolder"]
-                self.songsFolderLine.setText(settingsJson["songsFolder"])
-            else:
-                self.songsFolderPath = os.path.join(localAppDataPath, "osu!\\Songs")
-                self.songsFolderLine.setText(self.songsFolderPath)
-        if "replaysFolder" in settingsJson and settingsJson["replaysFolder"]:
+        settingsJson = self.loadSettingsJSON() or {}
+        if os.name == 'nt':
+            localAppDataPath = os.getenv('LOCALAPPDATA') or "c:\\"
+            appDataPath = os.getenv('APPDATA') or localAppDataPath
+            lazerFiles = os.path.join(appDataPath, "osu", "files")
+            defaultSongs = lazerFiles if os.path.isdir(lazerFiles) else os.path.join(localAppDataPath, "osu!", "Songs")
+            defaultReplays = os.path.join(appDataPath, "osu", "exports") if os.path.isdir(lazerFiles) else os.path.join(localAppDataPath, "osu!", "Replays")
+        else:
+            defaultOsuPath = os.path.expanduser("~/.local/share/osu")
+            lazerFiles = os.path.join(defaultOsuPath, "files")
+            defaultSongs = lazerFiles if os.path.isdir(lazerFiles) else os.path.join(defaultOsuPath, "Songs")
+            defaultReplays = os.path.join(defaultOsuPath, "exports")
+
+        if settingsJson.get("songsFolder"):
+            self.songsFolderPath = settingsJson["songsFolder"]
+        else:
+            self.songsFolderPath = defaultSongs
+        self.songsFolderLine.setText(self.songsFolderPath)
+
+        if settingsJson.get("replaysFolder"):
             self.replayFolderPath = settingsJson["replaysFolder"]
         else:
-            self.replayFolderPath = os.path.join(localAppDataPath, "osu!\\Replays")
+            self.replayFolderPath = defaultReplays
         
         # load beatmaphashes.dat if it exists
         self.beatmapHashLib: SongsFolderLibrary | None = self.loadLibraryPickle()
@@ -99,7 +105,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return data
     
     def getSongsFolder(self):
-        dname = QFileDialog.getExistingDirectory(self, 'Open folder', 'c:\\')
+        dname = QFileDialog.getExistingDirectory(self, 'Open folder', self.songsFolderPath)
         if dname:
             self.songsFolderLine.setText(dname)
             self.songsFolderPath = dname
@@ -372,8 +378,9 @@ class MplCanvas(FigureCanvasQTAgg):
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
-app = QtWidgets.QApplication(sys.argv)
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
 
-window = MainWindow()
-window.show()
-app.exec()
+    window = MainWindow()
+    window.show()
+    app.exec()

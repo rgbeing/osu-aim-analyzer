@@ -24,8 +24,8 @@ class BeatmapParser():
         self.timing_lines = []
         self.object_lines = []
         self.events_lines = []
-        self.section_reg = re.compile('^\[([a-zA-Z0-9]+)\]$')
-        self.key_val_reg = re.compile('^([a-zA-Z0-9]+)[ ]*:[ ]*(.+)$')
+        self.section_reg = re.compile(r'^\[([a-zA-Z0-9]+)\]$')
+        self.key_val_reg = re.compile(r'^([a-zA-Z0-9]+)[ ]*:[ ]*(.+)$')
         self.curve_types = {
             "C": "catmull",
             "B": "bezier",
