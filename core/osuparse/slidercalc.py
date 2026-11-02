@@ -67,6 +67,8 @@ def get_end_point(slider_type, slider_length, points):
 
 def point_on_line(p1, p2, length):
     full_length = math.sqrt(math.pow(p2[0] - p1[0], 2) + math.pow(p2[1] - p1[1], 2))
+    if full_length == 0:
+        return [p1[0], p1[1]]
     n = full_length - length
 
     x = (n * p1[0] + length * p2[0]) / full_length
@@ -119,7 +121,12 @@ def get_circum_circle(p1, p2, p3):
     d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
     if d == 0:
         x2 += 1 # makeshift
+        y2 += 1
         d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
+        if d == 0:
+            x3 += 2
+            y3 -= 1
+            d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2))
 
     ux = ((x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2)) / d
     uy = ((x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1)) / d
